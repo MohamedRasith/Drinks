@@ -73,7 +73,7 @@ class AppTheme {
         secondary: accentColor,
         onSecondary: onAccentColor ?? textColor,
       ),
-      toggleableActiveColor: accentColor,
+      toggleButtonsTheme: const ToggleButtonsThemeData(color: Colors.green),
       // textSelectionTheme: TextSelectionThemeData(
       //   cursorColor: accentColor,
       //   selectionColor: accentColor?.withOpacity(0.75),

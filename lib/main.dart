@@ -49,7 +49,7 @@ class _MainApp extends StatelessWidget {
       builder: (context, _) => MaterialApp(
         debugShowCheckedModeBanner: false,
         builder: _appBuilder,
-        scrollBehavior: const _DefaultScrollBehavior(),
+        scrollBehavior:  _DefaultScrollBehavior(),
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeController.of(context).themeMode,
@@ -72,10 +72,10 @@ class _MainApp extends StatelessWidget {
 }
 
 class _DefaultScrollBehavior extends ScrollBehavior {
-  const _DefaultScrollBehavior({
-    AndroidOverscrollIndicator? androidOverscrollIndicator,
-  }) : super(androidOverscrollIndicator: androidOverscrollIndicator);
-
   @override
-  Widget buildViewportChrome(_, child, __) => child;
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
+  }
 }
+

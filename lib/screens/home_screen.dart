@@ -6,6 +6,7 @@ import 'package:drinks/widgets/custom_loader.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
   static const id = 'HomeScreen';
@@ -29,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       _drinks = await DrinksRepository.getDrinks(searchQuery: q);
     } catch (_) {
-      showSnackBar('Something went wrong!');
+
     }
     setState(() => _isLoading = false);
   }
@@ -90,6 +91,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                   _updateDrinks(searchQuery);
                 },
+                onChanged: (value) {
+                  if (value.isEmpty) {
+                    setState(() {
+                      _updateDrinks(null);
+                    });
+
+                  }
+                  else {
+                    setState(() {
+                      _updateDrinks(value);
+                    });
+
+                  }
+                },
                 decoration: InputDecoration(
                   fillColor: Colors.white,
                   filled: true,
@@ -109,28 +124,28 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 10,width: 40,),
-              ElevatedButton(
-                child: const Text(
-                  'Search',
-                  style: TextStyle(fontSize: 20),
-                ),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.black),
-                    minimumSize: MaterialStateProperty.all(Size(50, 50)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50.0),
-                        ),
-                    ),
-                ),
-                onPressed: () async {
-                  final searchQuery = searchController.text;
-                  if (isNullOrBlank(searchQuery)) {
-                    return showSnackBar('Please Enter Any Words');
-                  }
-                  _updateDrinks(searchQuery);
-                },
-              ),
+              // ElevatedButton(
+              //   style: ButtonStyle(
+              //     backgroundColor: MaterialStateProperty.all(Colors.white),
+              //       minimumSize: MaterialStateProperty.all(Size(50, 50)),
+              //       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              //           RoundedRectangleBorder(
+              //             borderRadius: BorderRadius.circular(50.0),
+              //           ),
+              //       ),
+              //   ),
+              //   onPressed: () async {
+              //     final searchQuery = searchController.text;
+              //     if (isNullOrBlank(searchQuery)) {
+              //       return showSnackBar('Please Enter Any Words');
+              //     }
+              //     _updateDrinks(searchQuery);
+              //   },
+              //   child: const Text(
+              //     'Search',
+              //     style: TextStyle(fontSize: 20),
+              //   ),
+              // ),
               const SizedBox(height: 25),
               if (_isLoading)
                 const CustomLoader()
@@ -169,25 +184,28 @@ class _DrinkCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Card(
+    var date = DateTime.tryParse(drink.dateModified.toString());
+    return Container(
+      padding: EdgeInsets.all(10),
+      child: Card(
         color: Colors.white,
-        margin: EdgeInsets.only(top: 10,bottom: 10),
-        child: Container(
-          margin: EdgeInsets.only(top: 10,bottom: 10),
-          child: Column(
+        margin: EdgeInsets.only(bottom: 10),
+        child: ListTile(
+          leading: Image.network("${drink.strDrinkThumb}", width: 50, height: 50,),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('ID: '+drink.idDrink),
-              Text('Name: '+drink.strDrink),
-              Text('Category: '+drink.strCategory),
+              Text('Name: ${drink.strDrink}'),
+              Text('Category: ${drink.strCategory}'),
+              Text('Updated on: ${DateFormat("dd MMM yyyy").format(date ?? DateTime.now())}'),
             ],
           ),
-        )
-      ),
-      onTap: () => Navigator.pushNamed(
-        context,
-        DrinkDetailsScreen.id,
-        arguments: drink,
+          onTap: () => Navigator.pushNamed(
+            context,
+            DrinkDetailsScreen.id,
+            arguments: drink,
+          ),
+        ),
       ),
     );
   }

@@ -32,7 +32,7 @@ class DrinkDetailsScreen extends StatelessWidget {
       color: Colors.white,
       child: ListView(
         children: [
-          Image.asset('assets/images/logo.png',width: 100,height: 100,),
+          Image.network('${drink.strDrinkThumb}',width: MediaQuery.of(context).size.width,fit: BoxFit.fill,),
           _InfoTile(
             title: 'Tags',
             subtitle: drink.strTags,

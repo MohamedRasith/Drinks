@@ -19,7 +19,7 @@ class CustomLoader extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(padding),
       child: Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
       image: DecorationImage(
     image: AssetImage('assets/images/bg.png'),
     fit: BoxFit.fill,
@@ -31,7 +31,7 @@ class CustomLoader extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Padding(
-                padding: EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.only(bottom: 20),
                 child:Image.asset('assets/images/logo.png',width: 200,height: 200,)
             ),
             SizedBox(
