@@ -75,100 +75,78 @@ class _HomeScreenState extends State<HomeScreen> {
     colorFilter: ColorFilter.mode(Colors.white70, BlendMode.lighten),
     )
     ),
-    child:DoubleBackToCloseApp(
-          snackBar: const SnackBar(
-            content: Text('Tap the back button again to exit the app!'),
-          ),
-          child: ListView(
-            padding: const EdgeInsets.all(10),
-            children: [
-              TextField(
-                controller: searchController,
-                onSubmitted: (_) {
-                  final searchQuery = searchController.text;
-                  if (isNullOrBlank(searchQuery)) {
-                    return showSnackBar('Please enter a valid search term!');
-                  }
-                  _updateDrinks(searchQuery);
-                },
-                onChanged: (value) {
-                  if (value.isEmpty) {
-                    setState(() {
-                      _updateDrinks(null);
-                    });
-
-                  }
-                  else {
-                    setState(() {
-                      _updateDrinks(value);
-                    });
-
-                  }
-                },
-                decoration: InputDecoration(
-                  fillColor: Colors.white,
-                  filled: true,
-                  hintText: 'Please search by drinks name',
-                  border: OutlineInputBorder(
+          child: DoubleBackToCloseApp(
+            snackBar: const SnackBar(
+              content: Text('Tap the back button again to exit the app!'),
+            ),
+            child: Column( // Use Column instead of ListView
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.purple, width: 2),
                   ),
-                  suffix: IconButton(
-                    onPressed: () {
-                      final q = searchController.text;
-                      if (!isNullOrBlank(q)) _updateDrinks(null);
-                      searchController.clear();
-                      FocusScope.of(context).unfocus();
-                    },
-                    icon: const Icon(Icons.clear,color: Colors.black,),
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: searchController,
+                          onChanged: (value) {
+                            setState(() {
+                              _updateDrinks(value.isEmpty ? null : value);
+                            });
+                          },
+                          style: TextStyle(fontSize: 16),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Please search by drinks name',
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          final q = searchController.text;
+                          if (q.isNotEmpty) _updateDrinks(null);
+                          searchController.clear();
+                          FocusScope.of(context).unfocus();
+                        },
+                        icon: Icon(Icons.clear, color: Colors.black),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              const SizedBox(height: 10,width: 40,),
-              // ElevatedButton(
-              //   style: ButtonStyle(
-              //     backgroundColor: MaterialStateProperty.all(Colors.white),
-              //       minimumSize: MaterialStateProperty.all(Size(50, 50)),
-              //       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              //           RoundedRectangleBorder(
-              //             borderRadius: BorderRadius.circular(50.0),
-              //           ),
-              //       ),
-              //   ),
-              //   onPressed: () async {
-              //     final searchQuery = searchController.text;
-              //     if (isNullOrBlank(searchQuery)) {
-              //       return showSnackBar('Please Enter Any Words');
-              //     }
-              //     _updateDrinks(searchQuery);
-              //   },
-              //   child: const Text(
-              //     'Search',
-              //     style: TextStyle(fontSize: 20),
-              //   ),
-              // ),
-              const SizedBox(height: 25),
-              if (_isLoading)
-                const CustomLoader()
-              else if (_drinks == null)
-                const Center(
-                  child: Text(
-                    '! Not Found',
-                    style: TextStyle(fontSize: 22),
-                  ),
-                )
-              else
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) => _DrinkCard(
-                    drink: _drinks![index],
-                  ),
-                  itemCount: _drinks!.length,
+                const SizedBox(
+                  height: 20,
                 ),
-            ],
+                if (_isLoading)
+                  const CustomLoader()
+                else if (_drinks == null || searchController.text.isEmpty)
+                  const Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 50),
+                      child: Text(
+                        'Please search any drinks!',
+                        style: TextStyle(fontSize: 22),
+                      ),
+                    ),
+                  )
+                else
+                  Expanded( // Ensures ListView.builder is scrollable
+                    child: ListView.builder(
+                      physics: const BouncingScrollPhysics(), // Allows smooth scrolling
+                      itemBuilder: (context, index) => _DrinkCard(
+                        drink: _drinks![index],
+                      ),
+                      itemCount: _drinks!.length,
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
-      ),
       ),
     );
   }
@@ -191,13 +169,56 @@ class _DrinkCard extends StatelessWidget {
         color: Colors.white,
         margin: EdgeInsets.only(bottom: 10),
         child: ListTile(
-          leading: Image.network("${drink.strDrinkThumb}", width: 50, height: 50,),
+          leading: CircleAvatar(
+            radius: 25,
+            backgroundImage: NetworkImage("${drink.strDrinkThumb}"), // Set image directly
+            backgroundColor: Colors.grey, // Fallback color if image is not available
+          ),
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Name: ${drink.strDrink}'),
-              Text('Category: ${drink.strCategory}'),
-              Text('Updated on: ${DateFormat("dd MMM yyyy").format(date ?? DateTime.now())}'),
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Name: ', // Bold and blue part
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue.shade800),
+                    ),
+                    TextSpan(
+                      text: drink.strDrink, // Normal part
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ],
+                ),
+              ),
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Category: ',
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue.shade800),
+                    ),
+                    TextSpan(
+                      text: drink.strCategory,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ],
+                ),
+              ),
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Updated on: ',
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue.shade800),
+                    ),
+                    TextSpan(
+                      text: DateFormat("dd MMM yyyy").format(date ?? DateTime.now()),
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
           onTap: () => Navigator.pushNamed(

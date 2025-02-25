@@ -8,6 +8,7 @@ import 'package:drinks/widgets/flutter_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -50,7 +51,9 @@ class _MainApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         builder: _appBuilder,
         scrollBehavior:  _DefaultScrollBehavior(),
-        theme: AppTheme.lightTheme,
+        theme: ThemeData(
+          fontFamily: GoogleFonts.poppins().fontFamily,
+        ),
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeController.of(context).themeMode,
         navigatorKey: Globals.navigatorKey,

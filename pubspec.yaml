@@ -41,6 +41,7 @@ dependencies:
   flutter_native_splash: ^2.1.6
   double_back_to_close_app: ^2.1.0
   intl: ^0.17.0
+  google_fonts: any
 
 dev_dependencies:
   flutter_test:
